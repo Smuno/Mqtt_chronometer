@@ -35,7 +35,12 @@
                     <button class="btn btn-warning" id="boton_pause">Pause</button>
                 </div>
             </div>
-            <ol reversed id="mqtt_list">Lista MQTT</ol>
+            <div class="row">
+                <button data-toggle="collapse" data-target="#lista_mqtt">Lista MQTT</button>
+                <div id="lista_mqtt" class="collapse">
+                    <ol reversed id="mqtt_list"></ol>
+                </div>
+            </div>
         </div>
     </div>
 </body>
@@ -138,7 +143,7 @@
         console.log("Mensaje Recibido***")
         console.log("Topic: " + topic)
         console.log("Mensaje:  " + payload)
-        $('#mqtt_list').prepend('<li>' + topic + ' = ' + payload + "Tiempo = " + $("#cronometro").TimeCircles().getTime() + '</li>');
+        $('#mqtt_list').append('<li>' + topic + ' = ' + payload + "Tiempo = " + $("#cronometro").TimeCircles().getTime() + '</li>');
     };
 
 </script>
