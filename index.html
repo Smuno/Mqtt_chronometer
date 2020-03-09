@@ -9,27 +9,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
     <!--Dependencias extras-->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link href="src/style.css" rel="stylesheet">
     <!--Cronometro-->
     <script type="text/javascript" src="src/TimeCircles/TimeCircles.js"></script>
     <link href="src/TimeCircles/TimeCircles.css" rel="stylesheet">
     <!--MQTT-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"
-        type="text/javascript"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js"></script>
+    <!--Bootstrap-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-    <div id="cronometro" data-timer="0"></div>
-    <button id="boton_start">Start</button>
-    <button id="boton_pause">Pause</button>
-    <ol reversed id="mqtt_list">Lista MQTT</ol>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10">
+                <div id="cronometro" data-timer="0"></div>
+            </div>
+            <div class="col-sm-2">
+                <div class="btn-group-vertical">
+                    <button class="btn btn-success" id="boton_start">Start</button>
+                    <button class="btn btn-warning" id="boton_pause">Pause</button>
+                </div>
+            </div>
+            <ol reversed id="mqtt_list">Lista MQTT</ol>
+        </div>
+    </div>
 </body>
 
 <script>
     /*CRONOMETRO*/
     console.log("inicio cronometro")
-    $("#cronometro").TimeCircles({ start: false,count_past_zero: true});
+    $("#cronometro").TimeCircles({ start: false, count_past_zero: true });
     $("#boton_pause").click(() => {
         console.log("click stop")
         pausar()
@@ -42,12 +56,19 @@
     );
     //Pausa el cronometro
     function pausar() {
+        $("#cronometro").TimeCircles({ start: false });
         $("#cronometro").TimeCircles().stop();
     }
     //Reanuda el cronometro
     function iniciar() {
+        $("#cronometro").TimeCircles({ start: true });
         $("#cronometro").TimeCircles().start();
     }
+    //si se cambia tamaño de ventana
+    $(window).resize(() => {
+        console.log("cambio de tamaño");
+        $("#cronometro").TimeCircles().rebuild();
+    })
 
     /*MQTT*/
     //datos de conexion a broker
@@ -115,9 +136,9 @@
         var topic = message.destinationName;
         var payload = message.payloadString;
         console.log("Mensaje Recibido***")
-        console.log("Topic: "+topic)
-        console.log("Mensaje:  "+payload)
-        $('#mqtt_list').prepend('<li>' + topic + ' = ' + payload +"Tiempo = "+$("#cronometro").TimeCircles().getTime()+ '</li>');
+        console.log("Topic: " + topic)
+        console.log("Mensaje:  " + payload)
+        $('#mqtt_list').prepend('<li>' + topic + ' = ' + payload + "Tiempo = " + $("#cronometro").TimeCircles().getTime() + '</li>');
     };
 
 </script>
