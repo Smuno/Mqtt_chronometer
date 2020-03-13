@@ -6,7 +6,6 @@ by Samuel Muñoz López - SWARM TECHNOLOGIES
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-//Seteo luces Leds
 const int blue = 4;
 const int red = 5;
 int red_ini = 0;
@@ -18,7 +17,7 @@ int blue_fin = 0;
 boolean B_blue = false;
 boolean B_red = false;
 
-String plMQTT; //String de recepcion plMQTT ¿por qué no bytes a int?
+String plMQTT; 
 
 //Seteo WIFI
 const char *ssid = "";     // Enter your WiFi name
@@ -40,8 +39,6 @@ void setup()
     Serial.begin(115200);
     Serial.println("v1");
     //Botones
-    //attachInterrupt(digitalPinToInterrupt(blue), blue_change, RISING);
-    //attachInterrupt(digitalPinToInterrupt(red), red_change, RISING);
     pinMode(blue, INPUT);
     pinMode(red, INPUT);
 
