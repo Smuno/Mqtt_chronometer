@@ -1,70 +1,47 @@
-    /*MQTT*/
-    //datos de conexion a broker
-    host = 'mqttws.safeko.cl';	// hostname or IP address
-    port = 443;
-    topic = 'smartu/cronometro';		// topic to subscribe to
-    useTLS = true;
-    username = "loraserver";
-    password = "SwarmTechnologies192";
-    cleansession = true;
-    var client;
-    var reconnectTimeout = 2000;
+// Creamos una instancia del cliente MQTT
+var clientId = "swarm-educate";
+var topic="light-bulb/device/1";
+clientId += new Date().getUTCMilliseconds();
+var client = new Paho.Client("educate.swarm.cl", 8080 , clientId);
 
-    $(document).ready(function () {
-        MQTTconnect();
-        //añadir inicio cronometro
-    });
-    //funcion de conexion
-    function MQTTconnect() {
-        if (typeof path == "undefined") {
-            path = '/';
-        }
-        client = new Paho.Client(
-            host,
-            port,
-            path,
-            "crono" + parseInt(Math.random() * 100, 10)
-        );
-        var options = {
-            timeout: 3,
-            useSSL: useTLS,
-            cleanSession: cleansession,
-            onSuccess: onConnect,
-            onFailure: function (message) {
-                console.log("Conexion fallida: " + message.errorMessage + "Reintentando");
-                setTimeout(MQTTconnect, reconnectTimeout);
-            }
-        };
+// Inducamos las funciones que se ejecutarán ante estos eventos
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
 
-        client.onConnectionLost = onConnectionLost;
-        client.onMessageArrived = onMessageArrived;
+// Realizamos la conexión
+client.connect({onSuccess:onConnect});
 
-        if (username != null) {
-            options.userName = username;
-            options.password = password;
-        }
-        console.log("Host=" + host + ", port=" + port + ", path=" + path + " TLS = " + useTLS + " username=" + username + " password=" + password);
-        client.connect(options);
-    }
-    //Cuando se conecta exitosamente
-    function onConnect() {
-        console.log('Conectado a ' + host + ':' + port + path);
-        // Connection succeeded; subscribe to our topic
-        client.subscribe(topic, { qos: 0 });
-        console.log(topic);
-    }
-    //Cuando se pierde la conexion
-    function onConnectionLost(response) {
-        setTimeout(MQTTconnect, reconnectTimeout);
-        console.log("Conexion perdida: " + responseObject.errorMessage + ". Reconectando");
 
-    };
-    //Cuando llega un mensaje
+//Declaramos las funciones
+// Esta función es llamada cuando se logra conectar al broker
+function onConnect() {
+  // Avisamos por consola que nos conectamos correctamente
+  console.log("Conectado");
+  //Nos suscribimos al tópico de comunicacion con dispositivo
+  client.subscribe(topic);
+  console.log("Suscrito a "+topic)
+}
+
+// Esta función es llamada cuando el cliente pierde conexión con el Broker
+function onConnectionLost(responseObject) {
+  if (responseObject.errorCode !== 0) {
+    console.log("onConnectionLost:"+responseObject.errorMessage);
+  }
+}
+
+ //Cuando llega un mensaje
     function onMessageArrived(message) {
         var topic = message.destinationName;
         var payload = message.payloadString;
+        var data =JSON.parse(message.payloadString);
         console.log("Mensaje Recibido***")
         console.log("Topic: " + topic)
         console.log("Mensaje:  " + payload)
         $('#mqtt_list').append('<li>' + topic + ' = ' + payload + "Tiempo = " + $("#cronometro").TimeCircles().getTime() + '</li>');
+        if (data.crono){
+            iniciar();
+        }
+        else{
+            pausar();
+        }
     };
