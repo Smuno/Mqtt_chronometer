@@ -12,8 +12,8 @@ const int red = 5;
 int red_ini = 0;
 int blue_ini = 0;
 
-int red_fin=0;
-int blue_fin=0;
+int red_fin = 0;
+int blue_fin = 0;
 
 boolean B_blue = false;
 boolean B_red = false;
@@ -21,7 +21,7 @@ boolean B_red = false;
 String plMQTT; //String de recepcion plMQTT ¿por qué no bytes a int?
 
 //Seteo WIFI
-const char *ssid = "";        // Enter your WiFi name
+const char *ssid = "";     // Enter your WiFi name
 const char *password = ""; // Enter WiFi password
 //Seteo MQTT Server
 const char *mqttServer = "";
@@ -97,19 +97,18 @@ void callback(char *topic, byte *payload, unsigned int length)
     plMQTT = "";
 }
 
-
 void loop()
 {
     red_ini = digitalRead(red);
     blue_ini = digitalRead(blue);
 
-    if (red_ini !=red_fin)
+    if (red_ini != red_fin)
     {
         Serial.println("B_red");
         client.publish(topicCronometro, "{\"crono\":true}");
         delay(1000);
     }
-    if (blue_ini !=blue_fin)
+    if (blue_ini != blue_fin)
     {
         Serial.println("B_blue");
         client.publish(topicCronometro, "{\"crono\":false}");
@@ -118,5 +117,4 @@ void loop()
 
     red_fin = digitalRead(red);
     blue_fin = digitalRead(blue);
-
 }
