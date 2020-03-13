@@ -1,6 +1,6 @@
 // Creamos una instancia del cliente MQTT
 var clientId = "swarm-educate";
-var topic="light-bulb/device/1";
+var topic="smartu/cronometro";
 clientId += new Date().getUTCMilliseconds();
 var client = new Paho.Client("educate.swarm.cl", 8080 , clientId);
 
