@@ -20,17 +20,17 @@ boolean B_red = false;
 String plMQTT; 
 
 //Seteo WIFI
-const char *ssid = "";     // Enter your WiFi name
-const char *password = ""; // Enter WiFi password
+const char *ssid = "FEDORA";     // Enter your WiFi name
+const char *password = "babbage32"; // Enter WiFi password
 //Seteo MQTT Server
-const char *mqttServer = "";
-const int mqttPort = ;
-const char *mqttUser = "";
-const char *mqttPassword = "";
+const char *mqttServer = "educate.swarm.cl";
+const int mqttPort =1883;
+const char *mqttUser = "loraserver";
+const char *mqttPassword = "SwarmTechnologies192";
 //Seteo MQTT topicos
 const char *topicCronometro = "smartu/cronometro"; //Topico de recepcion desde appAndroid -> broker
 
-WiFiClientSecure espClient;
+WiFiClient espClient;
 PubSubClient client(espClient);
 
 void setup()
@@ -54,13 +54,14 @@ void setup()
     }
     Serial.println("Connected to the WiFi network");
     //Conexion Broker
+    String clientId = "ESP8266Client-";
+    clientId += String(random(0xffff), HEX);
     client.setServer(mqttServer, mqttPort);
     client.setCallback(callback); //funcion cuando se recibe mensaje desde topico
-    espClient.setInsecure();
     while (!client.connected())
     {
         Serial.println("Connecting to MQTT...");
-        if (client.connect("botones", mqttUser, mqttPassword))
+        if (client.connect(clientId.c_str()))
         {
             Serial.println("connected");
         }
@@ -96,6 +97,7 @@ void callback(char *topic, byte *payload, unsigned int length)
 
 void loop()
 {
+   client.loop();
     red_ini = digitalRead(red);
     blue_ini = digitalRead(blue);
 
@@ -109,7 +111,7 @@ void loop()
     {
         Serial.println("B_blue");
         client.publish(topicCronometro, "{\"crono\":false}");
-        delay(1000);
+        delay(100);
     }
 
     red_fin = digitalRead(red);
