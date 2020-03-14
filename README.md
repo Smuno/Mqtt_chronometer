@@ -6,3 +6,4 @@ Proyecto de cronometro web con conexion MQTT y activado con dispositivo ESP8266
 [W3School](https://www.w3schools.com/html/default.asp)
 
 
+https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js
